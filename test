@@ -1,0 +1,8 @@
+
+rm -rf *.o program.x
+
+make
+
+ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/
+
+./program.x /home/prokop/
