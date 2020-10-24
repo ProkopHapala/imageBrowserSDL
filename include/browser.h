@@ -1,4 +1,7 @@
 
+#include <SDL2/SDL.h>
+#include "imageOps.h"
+
 
 class Browser{
 	public:
@@ -79,7 +82,10 @@ class Browser{
 		int idot = name.find_last_of("."); 
 		string ext = name.substr( idot + 1);
 		//cout << name << " idot: " << idot << "  ext: " << ext << endl; 
-		if( (ext == "jpg") || (ext == "jpeg") || (ext == "JPG") || (ext == "JPEG") ){
+		if( 
+            (ext == "jpg") || (ext == "jpeg") || (ext == "JPG") || (ext == "JPEG") ||
+            (ext == "png") || (ext == "PNG") || (ext == "bmp") || (ext == "BMP") || (ext == "tif") || (ext == "TIF") 
+        ){
 			return true;
 		}
 		return false;
@@ -163,6 +169,7 @@ class Browser{
 			char* wd_ = getcwd( wd, sizeof(wd) );
 			work_dir = string(wd_);
 			printf( " work_dir: %.100s \n", work_dir.c_str() );
+            SDL_SetWindowTitle( screen->window, work_dir.c_str() );
 			return readDir( work_dir ); ;
 		}
 	}
@@ -195,13 +202,18 @@ class Browser{
 			rdest.x = (thumbRect.w - rdest.w) / 2;
 			rdest.y = (thumbRect.h - rdest.h) / 2;
 			
+            
 			SDL_BlitScaled( thisImage, &thisRect,  thumb, &rdest );
+
 			SDL_Color clr_txt;
  			clr_txt.a = ( clrText>>24 )&0xFF;
 			clr_txt.r = ( clrText>>16 )&0xFF;
 			clr_txt.g = ( clrText>>8  )&0xFF;
 			clr_txt.b = ( clrText     )&0xFF;
 			SDL_Surface* textSurf = TTF_RenderText_Solid( font, fname->c_str() , clr_txt );
+
+            //modifyChanel(  thumb, 0 );
+
 			SDL_BlitSurface( textSurf, &thumbRect, thumb, NULL );
 			//SDL_BlitSurface( textSurf, &thumbRect, screen->surface, NULL );
 			SDL_FreeSurface( textSurf );
@@ -430,6 +442,18 @@ class Browser{
 				}
 			}
 			//screen->updated = false;
+			screen->force_update();
+		}
+	}
+
+    void leave(){
+		printf( "return \n" );
+		if( mode == MODE_VIEW ){
+		}else if ( mode == MODE_THUMBS ) {
+            //if ( setAndReadDir( subDirNames[curThumb] ) > 0){
+            if ( setAndReadDir( ".." ) > 0){
+                setJob_thumbs( );
+            }
 			screen->force_update();
 		}
 	}

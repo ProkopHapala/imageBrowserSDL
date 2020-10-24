@@ -81,6 +81,7 @@ void inputHanding(){
 			if( event.key.keysym.sym == SDLK_LEFT   ) { browser->moveCol(-1); }
 			if( event.key.keysym.sym == SDLK_RIGHT  ) { browser->moveCol(+1); }
 			if( event.key.keysym.sym == SDLK_RETURN ) { browser->enter();     }
+            if( event.key.keysym.sym == SDLK_BACKSPACE ) { browser->leave();     }
 			//if( event.key.keysym.sym == SDLK_SPACE    ) { STOP = !STOP; printf( STOP ? " STOPED\n" : " UNSTOPED\n"); }
 			//if( event.key.keysym.sym == SDLK_KP_MINUS ) { thisScreen->zoom*=VIEW_ZOOM_STEP; }
 			//if( event.key.keysym.sym == SDLK_KP_PLUS  ) { thisScreen->zoom/=VIEW_ZOOM_STEP; }
@@ -99,13 +100,11 @@ void loop(int n ){
 }
 
 int main( int argc, char* args[] ){
-	if( argc>1 ){ startDir = args[1]; }else{  startDir = (char *)"/home/prokop/Desktop/woman/ByName/Ariel";  }
+	//if( argc>1 ){ startDir = args[1]; }else{  startDir = (char *)"/home/prokop/Desktop/woman/ByName/Ariel";  }
+    if( argc>1 ){ startDir = args[1]; }else{  startDir = (char *)"/home/prokop/Desktop";  }
 	printf( " starting in directory %s \n", startDir );
-	if(    init()    ){  
-		loop( 1000000 );
-	}else{    
-		printf( "Failed to initialize!\n" );	
-	}
+	if  (    init()    ){  loop( 1000000000 );                  }
+    else                {  printf( "Failed to initialize!\n" );	}
 	quit();
 	return 0;
 }
