@@ -20,11 +20,18 @@ class Browser{
 	vector<SDL_Surface*>  thumbs;
 	SDL_Surface         * thisImage;
 
+    //bool bMyDownScale = true;
+    bool bMyDownScale = false;
+
+
 	JOB job;
 	MODE mode;
 
 	int iThumbCurr;
 	int row0;
+
+    int width;
+    int height;
 
 	int curRow;
 	int curCol;
@@ -202,16 +209,22 @@ class Browser{
 			rdest.x = (thumbRect.w - rdest.w) / 2;
 			rdest.y = (thumbRect.h - rdest.h) / 2;
 			
-            
-			SDL_BlitScaled( thisImage, &thisRect,  thumb, &rdest );
+            if(bMyDownScale){
+			    downScale( thisImage, thumb, &rdest );
+            }else{
+                SDL_BlitScaled( thisImage, &thisRect,  thumb, &rdest );
+            }
 
 			SDL_Color clr_txt;
  			clr_txt.a = ( clrText>>24 )&0xFF;
 			clr_txt.r = ( clrText>>16 )&0xFF;
 			clr_txt.g = ( clrText>>8  )&0xFF;
 			clr_txt.b = ( clrText     )&0xFF;
-			SDL_Surface* textSurf = TTF_RenderText_Solid( font, fname->c_str() , clr_txt );
 
+            char txDebug[256];
+            sprintf( txDebug, "nb %i", thisImage->pitch/thisImage->w );
+			SDL_Surface* textSurf = TTF_RenderText_Solid( font, txDebug , clr_txt );
+            //SDL_Surface* textSurf = TTF_RenderText_Solid( font, fname->c_str() , clr_txt );
             //modifyChanel(  thumb, 0 );
 
 			SDL_BlitSurface( textSurf, &thumbRect, thumb, NULL );
@@ -248,10 +261,18 @@ class Browser{
 
 	void view( const string& fname ){
 		//cout << " load: " << fname << endl;
+
 		printf( "view loading: %.100s \n", fname.c_str() );
 		thisImage = IMG_Load( fname.c_str() );
 		if ( thisImage !=NULL ){
 			//cout << " loaded: " << fname << endl;
+
+            screen->resize( thisImage->w, thisImage->h );
+            //SDL_SetWindowSize( screen->window, thisImage->w, thisImage->h ); 
+            //screen->force_update();
+            //surface = SDL_GetWindowSurface( window );
+            //glViewport(0, 0, windowWidth, windowHeight );
+
 			printf( "loaded: %.100s \n", fname.c_str() );
 			SDL_FillRect( screen->surface, NULL, clrBg );
 			thisRect.w = thisImage->w;
@@ -270,7 +291,12 @@ class Browser{
 			}
 			rdest.x = (screen->surface->w - rdest.w) / 2;
 			rdest.y = (screen->surface->h - rdest.h) / 2;
-			SDL_BlitScaled( thisImage, &thisRect,  screen->surface, &rdest );
+			//SDL_BlitScaled( thisImage, &thisRect,  screen->surface, &rdest );
+            if(bMyDownScale){
+			    downScale( thisImage, screen->surface, &rdest );
+            }else{
+                SDL_BlitScaled( thisImage, &thisRect,  screen->surface, &rdest );
+            }
 		} else { 
 			//cout << "cannot load: " << *fname << endl;
 			printf( "view cannot load: %.100s \n", fname.c_str() );
@@ -421,6 +447,9 @@ class Browser{
 	void enter(){
 		printf( "return \n" );
 		if( mode == MODE_VIEW ){
+            //SDL_SetWindowSize( screen->window, width, height );
+            //screen->force_update();
+            screen->resize( width, height );
 			mode = MODE_THUMBS;
 			SDL_FreeSurface( thisImage );
 			drawTiles();

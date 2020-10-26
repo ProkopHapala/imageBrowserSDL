@@ -39,6 +39,10 @@ void quit(){
 }
 
 bool init(){
+
+    int width  = 1200;
+    int height = 900;
+
 	if( TTF_Init() < 0 ){
 		printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 		return false;
@@ -52,7 +56,7 @@ bool init(){
 		printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
 		return false;
 	}else{	
-		screen  = new Screen2d( 1200,900 );
+		screen  = new Screen2d( width, height );
 		if( ! screen->init() ) return false;
 	}
 
@@ -63,6 +67,9 @@ bool init(){
 	browser->init();
 	browser->setAndReadDir( browser->work_dir );
 	browser->setJob_thumbs( );
+
+    browser->width  = width;
+    browser->height = height;
 
 	return true;
 }

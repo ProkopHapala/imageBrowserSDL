@@ -26,6 +26,15 @@ class Screen2d{
 		return success;
 	}
 
+    void resize( int W, int H ){
+        SCREEN_WIDTH  = W;
+	    SCREEN_HEIGHT = H;
+        SDL_SetWindowSize( window, W, H ); 
+        surface = SDL_GetWindowSurface( window );
+        force_update();
+        updated = false;
+    }
+
 	void force_update(){
 		SDL_UpdateWindowSurface( window );
 		updated = true;
